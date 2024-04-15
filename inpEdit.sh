@@ -66,6 +66,11 @@ while [ "$i" -le "$max_i" ]; do
     new_filename_ext="$filename-$i.inp"
     cp "$filename_ext" "$new_filename_ext"
     echo "Copied $filename_ext to $new_filename_ext"
+
+    new_text_i=$(echo "$new_text" | sed "s/\^i/$i/g")
+    sed -i "${linenum}s/.*/$new_text_i/" "$new_filename_ext"
+
+    
     i=$((i+step_size))
 done
 
