@@ -1,13 +1,20 @@
 #!/bin/bash
 
 # Check if bc is installed
-if  ![ -x "$(command -v bc)" ]; then
+if  ! [ -x "$(command -v bc)" ]; then
     echo "Error: bc is not installed. Please install it to proceed."
     echo "If you are using Debian or Ubuntu try:"
     echo "sudo apt-get install bc"
     exit 1
 fi
 
+# Function to calculate precision of a floating-point number
+get_precision() {
+    local num="$1"
+    local decimal_part="${num#*.}"
+    local precision=${#decimal_part}
+    echo "$precision"
+}
 # Ask the user for the file name
 read -p "Enter the file name (without extension): " filename
 
@@ -66,12 +73,12 @@ if [ "$(echo "$step_size > 0" | bc)" -eq 0 ]; then
     echo "Error: Step size cannot be zero."
     exit 1
 fi
-
+precision=$(get_precision "$step_size")
 # Generate file copies with appended file names
 i=$(printf "%.1f" "$initial_i")
 while [ "$(echo "$i <= $max_i" | bc)" -eq 1 ]; do
     # Format the file name with one decimal place
-    new_filename=$(printf "%s-%.1f" "$filename" "$i")
+    new_filename=$(printf "%s-%.*f" "$filename" "$precision" "$i")
     new_filename_ext="$new_filename.inp"
     cp "$filename_ext" "$new_filename_ext"
     echo "Copied $filename_ext to $new_filename_ext"
@@ -79,7 +86,7 @@ while [ "$(echo "$i <= $max_i" | bc)" -eq 1 ]; do
     # Replace ^i with the value of 'i' in the new text
     new_text_i=$(echo "$new_text" | sed "s/\^i/$i/g")
     sed -i "${linenum}s/.*/$new_text_i/" "$new_filename_ext"
-    
+    echo "Edited $new_filename_ext"
     i=$(echo "$i + $step_size" | bc)
-    i=$(printf "%.1f" "$i")
+    i=$(printf "%.*f" "$precision" "$i")
 done
