@@ -60,10 +60,11 @@ if [ "$(echo "$step_size > 0" | bc)" -eq 0 ]; then
 fi
 
 # Generate file copies with appended file names
-i=$(echo "$initial_i" | bc)
+i=$(printf "%.1f" "$initial_i")
 while [ "$(echo "$i <= $max_i" | bc)" -eq 1 ]; do
-    new_filename="$filename-$i"
-    new_filename_ext="$filename-$i.inp"
+    # Format the file name with one decimal place
+    new_filename=$(printf "%s-%.1f" "$filename" "$i")
+    new_filename_ext="$new_filename.inp"
     cp "$filename_ext" "$new_filename_ext"
     echo "Copied $filename_ext to $new_filename_ext"
     
@@ -72,4 +73,5 @@ while [ "$(echo "$i <= $max_i" | bc)" -eq 1 ]; do
     sed -i "${linenum}s/.*/$new_text_i/" "$new_filename_ext"
     
     i=$(echo "$i + $step_size" | bc)
+    i=$(printf "%.1f" "$i")
 done
