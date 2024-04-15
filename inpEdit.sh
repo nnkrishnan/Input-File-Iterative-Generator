@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Check if bc is installed
+if  ![ -x "$(command -v bc)" ]; then
+    echo "Error: bc is not installed. Please install it to proceed."
+    echo "If you are using Debian or Ubuntu try:"
+    echo "sudo apt-get install bc"
+    exit 1
+fi
+
 # Ask the user for the file name
 read -p "Enter the file name (without extension): " filename
 
