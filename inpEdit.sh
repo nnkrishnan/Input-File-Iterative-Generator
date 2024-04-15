@@ -25,4 +25,12 @@ if [ "$linenum" -le 0 ] || [ "$linenum" -gt "$total_lines" ]; then
 fi
 
 echo "Valid line number: $linenum"
-# Continue with your script logic here
+
+# Print the line before the valid line number
+sed -n "$((linenum-1))p" "$filename"
+
+# Print the valid line number in italics
+echo "\e[3m$(sed -n "${linenum}p" "$filename")\e[0m"
+
+# Print the line after the valid line number
+sed -n "$((linenum+1))p" "$filename"
