@@ -54,23 +54,22 @@ read -p "Enter the max i: " max_i
 read -p "Enter the step size: " step_size
 
 # Check if step size is non-zero
-if [ "$step_size" -eq 0 ]; then
+if [ "$(echo "$step_size > 0" | bc)" -eq 0 ]; then
     echo "Error: Step size cannot be zero."
     exit 1
 fi
 
 # Generate file copies with appended file names
-i="$initial_i"
-while [ "$i" -le "$max_i" ]; do
+i=$(echo "$initial_i" | bc)
+while [ "$(echo "$i <= $max_i" | bc)" -eq 1 ]; do
     new_filename="$filename-$i"
     new_filename_ext="$filename-$i.inp"
     cp "$filename_ext" "$new_filename_ext"
     echo "Copied $filename_ext to $new_filename_ext"
-
+    
+    # Replace ^i with the value of 'i' in the new text
     new_text_i=$(echo "$new_text" | sed "s/\^i/$i/g")
     sed -i "${linenum}s/.*/$new_text_i/" "$new_filename_ext"
-
     
-    i=$((i+step_size))
+    i=$(echo "$i + $step_size" | bc)
 done
-
