@@ -2,6 +2,8 @@
 echo "dev mode"
 bold=$(tput bold)
 normal=$(tput sgr0)
+underlineStart=$(tput smul)
+underlineEnd=$(tput rmul)
 # Check if bc is installed
 if  ! [ -x "$(command -v bc)" ]; then
     echo "Error: bc is not installed. Please install it to proceed."
@@ -17,6 +19,17 @@ get_precision() {
     local precision=${#decimal_part}
     echo "$precision"
 }
+# Get the list of .inp files in the current directory
+files=$(find . -maxdepth 1 -type f -name "*.inp" -exec basename {} \;)
+# Check if the current directory has *inp files
+if [ -z "$files" ]; then
+    echo "No .inp files found in the current directory. Exiting..."
+    exit 1
+fi
+
+# Print the input files found
+echo "The following .inp files were found in the current directory"
+printf "\t%s\n" "${files}"
 # Ask the user for the file name
 read -p "Enter the file name (without extension): " filename
 
@@ -29,8 +42,8 @@ if [ ! -f "$filename_ext" ]; then
     exit 1
 fi
 
-echo "File found: $filename_ext"
-
+echo "\tFile found: $filename_ext"
+echo "\tThe file contains $(wc -l < "$filename_ext") lines"
 # Ask the user for the line number
 read -p "Enter the line number: " linenum
 
@@ -41,7 +54,7 @@ if [ "$linenum" -le 0 ] || [ "$linenum" -gt "$total_lines" ]; then
     exit 1
 fi
 
-echo "Valid line number: $linenum"
+echo "$linenum is a valid line number"
 
 # Print the line before the valid line number
 echo "\033[2m$(sed -n "$((linenum-1))p" "$filename_ext")\033[0m"
@@ -57,7 +70,8 @@ echo "  "
 
 
 # Ask the user for the new text with ^i
-read -p "Enter the new text with ^i: " new_text
+echo -n "Enter the new text with ${underlineStart}^i${underlineEnd}: "
+read new_text
 
 # Check if the new text contains ^i using wildcard matching
 if ! echo "$new_text" | grep -q "\^i"; then
