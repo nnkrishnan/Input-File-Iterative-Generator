@@ -1,4 +1,7 @@
 #!/bin/bash
+
+echo "devmode"
+
 bold=$(tput bold)
 normal=$(tput sgr0)
 underlineStart=$(tput smul)
@@ -41,8 +44,8 @@ if [ ! -f "$filename_ext" ]; then
     exit 1
 fi
 
-echo "\tFile found: $filename_ext"
-echo "\tThe file contains $(wc -l < "$filename_ext") lines"
+printf "\tFile found: $filename_ext\n"
+printf "\tThe file contains $(wc -l < "$filename_ext") lines\n"
 # Ask the user for the line number
 read -p "Enter the line number: " linenum
 
@@ -53,18 +56,18 @@ if [ "$linenum" -le 0 ] || [ "$linenum" -gt "$total_lines" ]; then
     exit 1
 fi
 
-echo "$linenum is a valid line number \n"
+printf "$linenum is a valid line number\n"
 
 # Print the line before the selected line number
 if ! [ "$linenum" -eq 1 ]; then
-echo "\033[2m$(sed -n "\t$((linenum-1))p" "$filename_ext")\033[0m"
+printf "\t \033[2m%s\033[0m\n" "$(sed -n "$((linenum-1))p" "$filename_ext")"
 fi
 # Print the selected line in italics
-echo  "\033[1m$(sed -n "\t${linenum}p" "$filename_ext")\033[0m"
+printf  "\t \033[1m%s\033[0m\n" "$(sed -n "$((linenum))p" "$filename_ext")"
 
 if ! [ "$linenum" -eq "$(wc -l < "$filename_ext")" ]; then
 # Print the line after the selected line number
-echo "\033[2m$(sed -n "$((linenum+1))p" "$filename_ext")\033[0m"
+printf  "\t \033[2m$(sed -n "$((linenum+1))p" "$filename_ext")\033[0m"
 fi
 
 echo "  "
@@ -75,8 +78,8 @@ echo -n "Enter the new text with ${underlineStart}^i${underlineEnd}: "
 read new_text
 
 # Check if the new text contains ^i using wildcard matching
-if ! echo "$new_text" | grep -q "\^i"; then
-    echo "Error: The new text must contain ^i."
+if ! printf "$new_text" | grep -q "\^i"; then
+    printf "Error: The new text must contain ^i.\n"
     exit 1
 fi
 
