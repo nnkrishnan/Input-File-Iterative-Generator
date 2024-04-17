@@ -54,17 +54,19 @@ if [ "$linenum" -le 0 ] || [ "$linenum" -gt "$total_lines" ]; then
     exit 1
 fi
 
-echo "$linenum is a valid line number"
+echo "$linenum is a valid line number \n"
 
-# Print the line before the valid line number
-echo "\033[2m$(sed -n "$((linenum-1))p" "$filename_ext")\033[0m"
+# Print the line before the selected line number
+if ! [ "$linenum" -eq 1 ]; then
+echo "\033[2m$(sed -n "\t$((linenum-1))p" "$filename_ext")\033[0m"
+fi
+# Print the selected line in italics
+echo  "\033[1m$(sed -n "\t${linenum}p" "$filename_ext")\033[0m"
 
-# Print the valid line number in italics
-echo  "\033[1m$(sed -n "${linenum}p" "$filename_ext")\033[0m"
-
-# Print the line after the valid line number
+if ! [ "$linenum" -eq "$(wc -l < "$filename_ext")" ]; then
+# Print the line after the selected line number
 echo "\033[2m$(sed -n "$((linenum+1))p" "$filename_ext")\033[0m"
-
+fi
 
 echo "  "
 
