@@ -1,5 +1,4 @@
 #!/bin/bash
-echo "dev mode"
 bold=$(tput bold)
 normal=$(tput sgr0)
 underlineStart=$(tput smul)
