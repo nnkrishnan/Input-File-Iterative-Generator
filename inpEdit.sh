@@ -1,5 +1,7 @@
 #!/bin/bash
-
+echo "dev mode"
+bold=$(tput bold)
+normal=$(tput sgr0)
 # Check if bc is installed
 if  ! [ -x "$(command -v bc)" ]; then
     echo "Error: bc is not installed. Please install it to proceed."
@@ -42,13 +44,13 @@ fi
 echo "Valid line number: $linenum"
 
 # Print the line before the valid line number
-sed -n "$((linenum-1))p" "$filename_ext"
+echo "\033[2m$(sed -n "$((linenum-1))p" "$filename_ext")\033[0m"
 
 # Print the valid line number in italics
-echo "\e[3m$(sed -n "${linenum}p" "$filename_ext")\e[0m"
+echo  "\033[1m$(sed -n "${linenum}p" "$filename_ext")\033[0m"
 
 # Print the line after the valid line number
-sed -n "$((linenum+1))p" "$filename_ext"
+echo "\033[2m$(sed -n "$((linenum+1))p" "$filename_ext")\033[0m"
 
 
 echo "  "
