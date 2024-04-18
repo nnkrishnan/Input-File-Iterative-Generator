@@ -1,2 +1,3 @@
 # ignore all .inp files 
 *.inp
+*.inp.bk

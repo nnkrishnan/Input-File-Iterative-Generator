@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-bold=$(tput bold)
-normal=$(tput sgr0)
+# bold=$(tput bold)
+# normal=$(tput sgr0)
 underlineStart=$(tput smul)
 underlineEnd=$(tput rmul)
 # Check if bc is installed
@@ -30,7 +30,9 @@ fi
 
 # Print the input files found
 echo "The following .inp files were found in the current directory"
-printf "\t%s\n" "${files}"
+for file in $files; do
+    printf "\t%s\n" "$file"
+done
 # Ask the user for the file name
 read -p "Enter the file name (without extension): " filename
 
@@ -119,3 +121,19 @@ while [ "$(echo "$i <= $max_i" | bc)" -eq 1 ]; do
     i=$(echo "$i + $step_size" | bc)
     i=$(printf "%.*f" "$precision" "$i")
 done
+
+printf "Would you like to \n \t 1) Rename the original input file extention with .bk \n\t 2) Delete the original input file \nEnter your choice (1 or 2 or any other key to exit):"
+read -r choice
+
+case $choice in
+    1)
+        mv "$filename_ext" "$filename_ext.bk"
+        echo "The file has been renamed to $filename_ext.bk"
+        ;;
+    2)
+        rm "$filename_ext"
+        echo "The file $filename_ext has been deleted"
+        ;;
+esac
+
+echo "End of script..."
