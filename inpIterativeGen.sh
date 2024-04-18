@@ -1,6 +1,5 @@
 #!/bin/bash
 
-echo "devmode"
 
 bold=$(tput bold)
 normal=$(tput sgr0)
@@ -93,9 +92,19 @@ if [ "$(echo "$step_size > 0" | bc)" -eq 0 ]; then
     echo "Error: Step size cannot be zero."
     exit 1
 fi
+
+# Compute the precision. Precision is neccessory for accuratly writing values
 precision=$(get_precision "$step_size")
+if (( $(get_precision "$max_i") > precision )); then 
+    precision=$(get_precision "$max_i")
+fi
+
+if (( $(get_precision "$initial_i") > precision )); then  
+    precision=$(get_precision "$initial_i") 
+fi
+
 # Generate file copies with appended file names
-i=$(printf "%.1f" "$initial_i")
+i=$(printf "%.*f" "$precision" "$initial_i")
 while [ "$(echo "$i <= $max_i" | bc)" -eq 1 ]; do
     # Format the file name with one decimal place
     new_filename=$(printf "%s-%.*f" "$filename" "$precision" "$i")
