@@ -16,9 +16,14 @@ fi
 # Function to calculate precision of a floating-point number
 get_precision() {
     local num="$1"
-    local decimal_part="${num#*.}"
-    local precision=${#decimal_part}
-    echo "$precision"
+    if [[ "$num" =~ ^[0-9]+(\.[0-9]+) ]]; then
+        local decimal_part="${num#*.}"
+        local precision=${#decimal_part}
+        echo "$precision"
+    else 
+        local precision=1
+        echo "$precision"
+    fi
 }
 # Get the list of .inp files in the current directory
 files=$(find . -maxdepth 1 -type f -name "*.inp" -exec basename {} \;)
@@ -61,14 +66,14 @@ printf "$linenum is a valid line number\n"
 
 # Print the line before the selected line number
 if ! [ "$linenum" -eq 1 ]; then
-printf "\t \033[2m%s\033[0m\n" "$(sed -n "$((linenum-1))p" "$filename_ext")"
+    printf "\t \033[2m%s\033[0m\n" "$(sed -n "$((linenum-1))p" "$filename_ext")"
 fi
 # Print the selected line in italics
 printf  "\t \033[1m%s\033[0m\n" "$(sed -n "$((linenum))p" "$filename_ext")"
 
 if ! [ "$linenum" -eq "$(wc -l < "$filename_ext")" ]; then
-# Print the line after the selected line number
-printf  "\t \033[2m$(sed -n "$((linenum+1))p" "$filename_ext")\033[0m"
+    # Print the line after the selected line number
+    printf  "\t \033[2m$(sed -n "$((linenum+1))p" "$filename_ext")\033[0m"
 fi
 
 echo "  "
@@ -97,12 +102,12 @@ fi
 
 # Compute the precision. Precision is neccessory for accuratly writing values
 precision=$(get_precision "$step_size")
-if (( $(get_precision "$max_i") > precision )); then 
+if (( $(get_precision "$max_i") > precision )); then
     precision=$(get_precision "$max_i")
 fi
 
-if (( $(get_precision "$initial_i") > precision )); then  
-    precision=$(get_precision "$initial_i") 
+if (( $(get_precision "$initial_i") > precision )); then
+    precision=$(get_precision "$initial_i")
 fi
 
 # Generate file copies with appended file names
@@ -129,11 +134,11 @@ case $choice in
     1)
         mv "$filename_ext" "$filename_ext.bak"
         echo "The file has been renamed to $filename_ext.bak"
-        ;;
+    ;;
     2)
         rm "$filename_ext"
         echo "The file $filename_ext has been deleted"
-        ;;
+    ;;
 esac
 
 echo "End of script..."
